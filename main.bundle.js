@@ -692,18 +692,25 @@ var FeedComponent = (function () {
         this.store.dispatch(new __WEBPACK_IMPORTED_MODULE_6__actions_api__["e" /* UnSelectLightbox */](event));
     };
     FeedComponent.prototype.filterresults = function (filtervalue) {
+        this._queryControl.setValue(this.queryString);
+        var originalquery = this.queryString;
         if (filtervalue == 0) {
             console.log("All");
-            this.store.dispatch(new __WEBPACK_IMPORTED_MODULE_6__actions_api__["g" /* ShowAllTweets */](filtervalue));
         }
         else if (filtervalue == 1) {
             console.log("Images");
-            this.store.dispatch(new __WEBPACK_IMPORTED_MODULE_6__actions_api__["h" /* FilterTweetsWithImages */](filtervalue));
+            this.queryString = this.queryString + ' /image';
         }
         else if (filtervalue == 2) {
             console.log("Videos");
-            this.store.dispatch(new __WEBPACK_IMPORTED_MODULE_6__actions_api__["i" /* FilterTweetsWithVideos */](filtervalue));
+            this.queryString = this.queryString + ' /video';
         }
+        this.store.dispatch(new __WEBPACK_IMPORTED_MODULE_6__actions_api__["a" /* SearchAction */]({
+            queryString: this.queryString,
+            location: __WEBPACK_IMPORTED_MODULE_9__models_query__["a" /* ReloactionAfterQuery */].NONE
+        }));
+        this.queryString = originalquery;
+        this.store.dispatch(new __WEBPACK_IMPORTED_MODULE_7__actions_pagination__["a" /* RevertPaginationState */](''));
     };
     FeedComponent.prototype.showMoreUsers = function () {
         var _this = this;
@@ -1305,7 +1312,7 @@ LoklakAppRoutingModule = __decorate([
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser__ = __webpack_require__(58);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser__ = __webpack_require__(45);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_core__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_forms__ = __webpack_require__(24);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__angular_http__ = __webpack_require__(76);
@@ -1735,21 +1742,21 @@ var ApiSearchEffects = (function () {
         this.apiSearchService = apiSearchService;
         this.location = location;
         this.search$ = this.actions$
-            .ofType(__WEBPACK_IMPORTED_MODULE_12__actions_api__["j" /* ActionTypes */].SEARCH)
+            .ofType(__WEBPACK_IMPORTED_MODULE_12__actions_api__["g" /* ActionTypes */].SEARCH)
             .debounceTime(200)
             .map(function (action) { return action.payload; })
             .switchMap(function (query) {
-            var nextSearch$ = _this.actions$.ofType(__WEBPACK_IMPORTED_MODULE_12__actions_api__["j" /* ActionTypes */].SEARCH).skip(1);
+            var URIquery = encodeURIComponent(query.queryString);
+            var nextSearch$ = _this.actions$.ofType(__WEBPACK_IMPORTED_MODULE_12__actions_api__["g" /* ActionTypes */].SEARCH).skip(1);
             return _this.apiSearchService.fetchQuery(query.queryString)
                 .takeUntil(nextSearch$)
                 .map(function (response) {
                 if (query.location === __WEBPACK_IMPORTED_MODULE_13__models__["ReloactionAfterQuery"].RELOCATE) {
-                    var URIquery = encodeURIComponent(query.queryString);
                     _this.location.go("/search?query=" + URIquery);
                 }
-                return new __WEBPACK_IMPORTED_MODULE_12__actions_api__["m" /* SearchCompleteSuccessAction */](response);
+                return new __WEBPACK_IMPORTED_MODULE_12__actions_api__["j" /* SearchCompleteSuccessAction */](response);
             })
-                .catch(function () { return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4_rxjs_observable_of__["of"])(new __WEBPACK_IMPORTED_MODULE_12__actions_api__["n" /* SearchCompleteFailAction */]('')); });
+                .catch(function () { return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4_rxjs_observable_of__["of"])(new __WEBPACK_IMPORTED_MODULE_12__actions_api__["k" /* SearchCompleteFailAction */]('')); });
         });
     }
     return ApiSearchEffects;
@@ -1935,11 +1942,11 @@ var ApiUserSearchEffects = (function () {
         this.apiUserService = apiUserService;
         this.location = location;
         this.search$ = this.actions$
-            .ofType(__WEBPACK_IMPORTED_MODULE_12__actions_api__["j" /* ActionTypes */].FETCH_USER)
+            .ofType(__WEBPACK_IMPORTED_MODULE_12__actions_api__["g" /* ActionTypes */].FETCH_USER)
             .debounceTime(200)
             .map(function (action) { return action.payload; })
             .switchMap(function (query) {
-            var nextSearch$ = _this.actions$.ofType(__WEBPACK_IMPORTED_MODULE_12__actions_api__["j" /* ActionTypes */].SEARCH).skip(1);
+            var nextSearch$ = _this.actions$.ofType(__WEBPACK_IMPORTED_MODULE_12__actions_api__["g" /* ActionTypes */].SEARCH).skip(1);
             var re = new RegExp(/^(followers|from):\s*([a-zA-Z0-9_@]+)/, 'i');
             var matches = re.exec(query.queryString);
             var screenName = matches[2];
@@ -1949,9 +1956,9 @@ var ApiUserSearchEffects = (function () {
                 if (query.location === __WEBPACK_IMPORTED_MODULE_13__models_query__["a" /* ReloactionAfterQuery */].RELOCATE) {
                     _this.location.go("/search?query=" + query.queryString);
                 }
-                return new __WEBPACK_IMPORTED_MODULE_12__actions_api__["k" /* FetchUserSuccessAction */](response);
+                return new __WEBPACK_IMPORTED_MODULE_12__actions_api__["h" /* FetchUserSuccessAction */](response);
             })
-                .catch(function () { return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4_rxjs_observable_of__["of"])(new __WEBPACK_IMPORTED_MODULE_12__actions_api__["l" /* FetchUserFailAction */]('')); });
+                .catch(function () { return __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_4_rxjs_observable_of__["of"])(new __WEBPACK_IMPORTED_MODULE_12__actions_api__["i" /* FetchUserFailAction */]('')); });
         });
     }
     return ApiUserSearchEffects;
@@ -2048,7 +2055,7 @@ var PaginationEffects = (function () {
             _this.lastRecord = state.apiResponse.entities.length;
         })
             .switchMap(function () {
-            var nextSearch$ = _this.actions$.ofType(__WEBPACK_IMPORTED_MODULE_12__actions_api__["j" /* ActionTypes */].SEARCH);
+            var nextSearch$ = _this.actions$.ofType(__WEBPACK_IMPORTED_MODULE_12__actions_api__["g" /* ActionTypes */].SEARCH);
             return _this.apiSearchService.fetchQuery(_this.query.queryString, _this.lastRecord)
                 .takeUntil(nextSearch$)
                 .map(function (response) {
@@ -2083,6 +2090,7 @@ var _a, _b, _c, _d;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_Rx__ = __webpack_require__(550);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_Rx___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_rxjs_Rx__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__shared_configrations__ = __webpack_require__(145);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__angular_platform_browser__ = __webpack_require__(45);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return FeedCardComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -2097,9 +2105,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
+
 var FeedCardComponent = (function () {
-    function FeedCardComponent(ref) {
+    function FeedCardComponent(ref, sanitizer) {
         this.ref = ref;
+        this.sanitizer = sanitizer;
         this.cardAutolinkerConfig = new __WEBPACK_IMPORTED_MODULE_3__shared_configrations__["a" /* AutolinkerConfig */]();
         this.datetime = null;
         this.showLightBox = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["EventEmitter"]();
@@ -2109,6 +2119,7 @@ var FeedCardComponent = (function () {
         this.modifyAutolinkerConfig();
         var timer = __WEBPACK_IMPORTED_MODULE_2_rxjs_Rx__["Observable"].timer(0, 10000);
         timer.subscribe(function (t) { return _this.ttt(); });
+        this.sanitizeandembedURLs(this.feedItem.videos);
     };
     FeedCardComponent.prototype.onShowed = function (show) {
         if (show) {
@@ -2220,6 +2231,15 @@ var FeedCardComponent = (function () {
             this.inviewport = event.value;
         }
     };
+    FeedCardComponent.prototype.sanitizeandembedURLs = function (links) {
+        for (var i = 0; i < links.length; i++) {
+            var videoid = links[i].match(/(?:https?:\/{2})?(?:w{3}\.)?youtu(?:be)?\.(?:com|be)(?:\/watch\?v=|\/)([^\s&]+)/);
+            if (videoid != null) {
+                links[i] = "http://www.youtube.com/embed/" + videoid[1];
+            }
+            links[i] = this.sanitizer.bypassSecurityTrustResourceUrl(links[i]);
+        }
+    };
     return FeedCardComponent;
 }());
 __decorate([
@@ -2241,10 +2261,10 @@ FeedCardComponent = __decorate([
         styles: [__webpack_require__(962)],
         changeDetection: __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectionStrategy"].OnPush
     }),
-    __metadata("design:paramtypes", [typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"]) === "function" && _c || Object])
+    __metadata("design:paramtypes", [typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"] !== "undefined" && __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_4__angular_platform_browser__["f" /* DomSanitizer */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_4__angular_platform_browser__["f" /* DomSanitizer */]) === "function" && _d || Object])
 ], FeedCardComponent);
 
-var _a, _b, _c;
+var _a, _b, _c, _d;
 //# sourceMappingURL=/Users/apple/Desktop/haass/loklak/loklak_search/src/feed-card.component.js.map
 
 /***/ }),
@@ -2395,7 +2415,8 @@ var _a, _b;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__models_api_response___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1__models_api_response__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_Rx__ = __webpack_require__(550);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_Rx___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_rxjs_Rx__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__shared_configrations__ = __webpack_require__(145);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__angular_platform_browser__ = __webpack_require__(45);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__shared_configrations__ = __webpack_require__(145);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return FeedLightboxComponent; });
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -2410,9 +2431,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
+
 var FeedLightboxComponent = (function () {
-    function FeedLightboxComponent() {
-        this.cardAutolinkerConfig = new __WEBPACK_IMPORTED_MODULE_3__shared_configrations__["a" /* AutolinkerConfig */]();
+    function FeedLightboxComponent(sanitizer) {
+        this.sanitizer = sanitizer;
+        this.cardAutolinkerConfig = new __WEBPACK_IMPORTED_MODULE_4__shared_configrations__["a" /* AutolinkerConfig */]();
         this.datetime = null;
         this.hideLightBox = new __WEBPACK_IMPORTED_MODULE_0__angular_core__["EventEmitter"]();
     }
@@ -2425,7 +2448,7 @@ var FeedLightboxComponent = (function () {
     FeedLightboxComponent.prototype.modifyAutolinkerConfig = function () {
         // hashtag and mention use the default configration strategy.
         // Links use the one-to-one map strategy using unshorten property of feedItem
-        this.cardAutolinkerConfig.link.link_type = __WEBPACK_IMPORTED_MODULE_3__shared_configrations__["b" /* ConfigLinkType */].OneToOneMap;
+        this.cardAutolinkerConfig.link.link_type = __WEBPACK_IMPORTED_MODULE_4__shared_configrations__["b" /* ConfigLinkType */].OneToOneMap;
         this.cardAutolinkerConfig.link.link_to = this.feedItem.unshorten || {};
     };
     Object.defineProperty(FeedLightboxComponent.prototype, "profileURL", {
@@ -2536,10 +2559,10 @@ FeedLightboxComponent = __decorate([
         template: __webpack_require__(990),
         styles: [__webpack_require__(965)],
     }),
-    __metadata("design:paramtypes", [])
+    __metadata("design:paramtypes", [typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_3__angular_platform_browser__["f" /* DomSanitizer */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__angular_platform_browser__["f" /* DomSanitizer */]) === "function" && _c || Object])
 ], FeedLightboxComponent);
 
-var _a, _b;
+var _a, _b, _c;
 //# sourceMappingURL=/Users/apple/Desktop/haass/loklak/loklak_search/src/feed-lightbox.component.js.map
 
 /***/ }),
@@ -3536,7 +3559,6 @@ var initialState = {
     selected: null,
     selectedavail: false,
 };
-var originalresult;
 /**
  * The actual reducer function. Reducers can be thought of as the tables in the DataBase.
  * These are the functions which are responsible for maintaing, and updating the
@@ -3548,14 +3570,12 @@ var originalresult;
 function reducer(state, action) {
     if (state === void 0) { state = initialState; }
     switch (action.type) {
-        case __WEBPACK_IMPORTED_MODULE_0__actions_api__["j" /* ActionTypes */].SEARCH_COMPLETE_SUCCESS: {
+        case __WEBPACK_IMPORTED_MODULE_0__actions_api__["g" /* ActionTypes */].SEARCH_COMPLETE_SUCCESS: {
             var apiResponse = action.payload;
             var tagStrings_1 = [].concat.apply([], apiResponse.statuses.map(function (item) { return item.hashtags; }));
             var hashtags = Array.from(new Set(tagStrings_1)).map(function (tag) {
                 return { tag: tag, count: tagStrings_1.filter(function (y) { return y === tag; }).length };
             });
-            originalresult = apiResponse.statuses || null;
-            console.log(originalresult);
             return Object.assign({}, state, {
                 pages: [apiResponse],
                 entities: apiResponse.statuses,
@@ -3566,7 +3586,7 @@ function reducer(state, action) {
                 selectedavail: false
             });
         }
-        case __WEBPACK_IMPORTED_MODULE_0__actions_api__["j" /* ActionTypes */].SEARCH_COMPLETE_FAIL: {
+        case __WEBPACK_IMPORTED_MODULE_0__actions_api__["g" /* ActionTypes */].SEARCH_COMPLETE_FAIL: {
             return Object.assign({}, state, {
                 valid: false
             });
@@ -3589,37 +3609,17 @@ function reducer(state, action) {
         case __WEBPACK_IMPORTED_MODULE_1__actions_pagination__["c" /* ActionTypes */].PAGINATION_COMPLETE_FAIL: {
             return state;
         }
-        case __WEBPACK_IMPORTED_MODULE_0__actions_api__["j" /* ActionTypes */].SELECT_RESULT: {
+        case __WEBPACK_IMPORTED_MODULE_0__actions_api__["g" /* ActionTypes */].SELECT_RESULT: {
             var present = (action.payload + 1) ? true : false;
             return Object.assign({}, state, {
                 selectedavail: present,
                 selected: action.payload
             });
         }
-        case __WEBPACK_IMPORTED_MODULE_0__actions_api__["j" /* ActionTypes */].UNSELECT_RESULT: {
+        case __WEBPACK_IMPORTED_MODULE_0__actions_api__["g" /* ActionTypes */].UNSELECT_RESULT: {
             return Object.assign({}, state, {
                 selectavail: false,
                 selected: null
-            });
-        }
-        case __WEBPACK_IMPORTED_MODULE_0__actions_api__["j" /* ActionTypes */].SHOW_ALL_TWEETS: {
-            console.log(originalresult);
-            return Object.assign({}, state, {
-                entities: originalresult
-            });
-        }
-        case __WEBPACK_IMPORTED_MODULE_0__actions_api__["j" /* ActionTypes */].FILTER_IMAGE_TWEETS: {
-            var results = originalresult.filter(function (value) { return value.images_count > 0; });
-            console.log(results);
-            return Object.assign({}, state, {
-                entities: results
-            });
-        }
-        case __WEBPACK_IMPORTED_MODULE_0__actions_api__["j" /* ActionTypes */].FILTER_VIDEO_TWEETS: {
-            var results = originalresult.filter(function (value) { return value.videos_count > 0; });
-            console.log(results);
-            return Object.assign({}, state, {
-                entities: results
             });
         }
         default: {
@@ -3680,20 +3680,20 @@ var initialState = {
 function reducer(state, action) {
     if (state === void 0) { state = initialState; }
     switch (action.type) {
-        case __WEBPACK_IMPORTED_MODULE_0__actions_api__["j" /* ActionTypes */].SEARCH: {
+        case __WEBPACK_IMPORTED_MODULE_0__actions_api__["g" /* ActionTypes */].SEARCH: {
             return Object.assign({}, state, {
                 user: null,
                 showUserInfo: false,
                 loading: true
             });
         }
-        case __WEBPACK_IMPORTED_MODULE_0__actions_api__["j" /* ActionTypes */].FETCH_USER: {
+        case __WEBPACK_IMPORTED_MODULE_0__actions_api__["g" /* ActionTypes */].FETCH_USER: {
             return Object.assign({}, state, {
                 showUserInfo: true,
                 loading: true
             });
         }
-        case __WEBPACK_IMPORTED_MODULE_0__actions_api__["j" /* ActionTypes */].FETCH_USER_SUCCESS: {
+        case __WEBPACK_IMPORTED_MODULE_0__actions_api__["g" /* ActionTypes */].FETCH_USER_SUCCESS: {
             var userResponse = action.payload;
             return Object.assign({}, state, {
                 user: userResponse.user,
@@ -3702,7 +3702,7 @@ function reducer(state, action) {
                 loading: false
             });
         }
-        case __WEBPACK_IMPORTED_MODULE_0__actions_api__["j" /* ActionTypes */].FETCH_USER_FAIL: {
+        case __WEBPACK_IMPORTED_MODULE_0__actions_api__["g" /* ActionTypes */].FETCH_USER_FAIL: {
             return Object.assign({}, state, {
                 loading: false,
                 showUserInfo: false
@@ -3840,32 +3840,32 @@ var initialState = {
 function reducer(state, action) {
     if (state === void 0) { state = initialState; }
     switch (action.type) {
-        case __WEBPACK_IMPORTED_MODULE_0__actions_api__["j" /* ActionTypes */].SEARCH: {
+        case __WEBPACK_IMPORTED_MODULE_0__actions_api__["g" /* ActionTypes */].SEARCH: {
             var query = action.payload;
             return Object.assign({}, state, {
                 query: query,
                 loading: true
             });
         }
-        case __WEBPACK_IMPORTED_MODULE_0__actions_api__["j" /* ActionTypes */].FETCH_USER: {
+        case __WEBPACK_IMPORTED_MODULE_0__actions_api__["g" /* ActionTypes */].FETCH_USER: {
             var query = action.payload;
             return Object.assign({}, state, {
                 query: query,
                 loading: true
             });
         }
-        case __WEBPACK_IMPORTED_MODULE_0__actions_api__["j" /* ActionTypes */].SEARCH_COMPLETE_SUCCESS:
-        case __WEBPACK_IMPORTED_MODULE_0__actions_api__["j" /* ActionTypes */].SEARCH_COMPLETE_FAIL: {
+        case __WEBPACK_IMPORTED_MODULE_0__actions_api__["g" /* ActionTypes */].SEARCH_COMPLETE_SUCCESS:
+        case __WEBPACK_IMPORTED_MODULE_0__actions_api__["g" /* ActionTypes */].SEARCH_COMPLETE_FAIL: {
             return Object.assign({}, state, {
                 loading: false
             });
         }
-        case __WEBPACK_IMPORTED_MODULE_0__actions_api__["j" /* ActionTypes */].SHOW_SEARCH_RESULTS: {
+        case __WEBPACK_IMPORTED_MODULE_0__actions_api__["g" /* ActionTypes */].SHOW_SEARCH_RESULTS: {
             return Object.assign({}, state, {
                 showUserFeed: false
             });
         }
-        case __WEBPACK_IMPORTED_MODULE_0__actions_api__["j" /* ActionTypes */].SHOW_USER_FEED: {
+        case __WEBPACK_IMPORTED_MODULE_0__actions_api__["g" /* ActionTypes */].SHOW_USER_FEED: {
             return Object.assign({}, state, {
                 showUserFeed: true
             });
@@ -4080,8 +4080,8 @@ var SearchService = SearchService_1 = (function () {
     return SearchService;
 }());
 SearchService.apiUrl = new URL('http://api.loklak.org/api/search.json');
-SearchService.maximum_records_fetch = 100;
-SearchService.count = 100;
+SearchService.maximum_records_fetch = 20;
+SearchService.count = 40;
 SearchService.minified_results = true;
 SearchService.source = 'all';
 SearchService.fields = 'created_at,screen_name,mentions,hashtags';
@@ -4333,20 +4333,17 @@ var AutolinkerConfig = (function () {
 
 "use strict";
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__utils__ = __webpack_require__(314);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "j", function() { return ActionTypes; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "g", function() { return ActionTypes; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return SearchAction; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "m", function() { return SearchCompleteSuccessAction; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "n", function() { return SearchCompleteFailAction; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "j", function() { return SearchCompleteSuccessAction; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "k", function() { return SearchCompleteFailAction; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "f", function() { return SelectLightbox; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "e", function() { return UnSelectLightbox; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return FetchUserAction; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "k", function() { return FetchUserSuccessAction; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "l", function() { return FetchUserFailAction; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "h", function() { return FetchUserSuccessAction; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "i", function() { return FetchUserFailAction; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return ShowUserFeed; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return ShowSearchResults; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "g", function() { return ShowAllTweets; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "h", function() { return FilterTweetsWithImages; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "i", function() { return FilterTweetsWithVideos; });
 
 /**
  * For each action type in an action group, make a simple
@@ -4366,10 +4363,7 @@ var ActionTypes = {
     FETCH_USER_SUCCESS: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils__["a" /* actionTypeCheck */])('[Api] Fetch User Success'),
     FETCH_USER_FAIL: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils__["a" /* actionTypeCheck */])('[Api] Fetch User Fail'),
     SHOW_USER_FEED: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils__["a" /* actionTypeCheck */])('Show User Feed'),
-    SHOW_SEARCH_RESULTS: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils__["a" /* actionTypeCheck */])('Show Search Results'),
-    SHOW_ALL_TWEETS: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils__["a" /* actionTypeCheck */])('Show all tweets'),
-    FILTER_IMAGE_TWEETS: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils__["a" /* actionTypeCheck */])('Show tweets with Images'),
-    FILTER_VIDEO_TWEETS: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils__["a" /* actionTypeCheck */])('Show tweets with Videos')
+    SHOW_SEARCH_RESULTS: __webpack_require__.i(__WEBPACK_IMPORTED_MODULE_0__utils__["a" /* actionTypeCheck */])('Show Search Results')
 };
 /**
  * Every action is comprised of at least a type and an optional
@@ -4456,30 +4450,6 @@ var ShowSearchResults = (function () {
         this.type = ActionTypes.SHOW_SEARCH_RESULTS;
     }
     return ShowSearchResults;
-}());
-
-var ShowAllTweets = (function () {
-    function ShowAllTweets(payload) {
-        this.payload = payload;
-        this.type = ActionTypes.SHOW_ALL_TWEETS;
-    }
-    return ShowAllTweets;
-}());
-
-var FilterTweetsWithImages = (function () {
-    function FilterTweetsWithImages(payload) {
-        this.payload = payload;
-        this.type = ActionTypes.FILTER_IMAGE_TWEETS;
-    }
-    return FilterTweetsWithImages;
-}());
-
-var FilterTweetsWithVideos = (function () {
-    function FilterTweetsWithVideos(payload) {
-        this.payload = payload;
-        this.type = ActionTypes.FILTER_VIDEO_TWEETS;
-    }
-    return FilterTweetsWithVideos;
 }());
 
 //# sourceMappingURL=/Users/apple/Desktop/haass/loklak/loklak_search/src/api.js.map
@@ -5393,7 +5363,7 @@ module.exports = "\n<app-navbar></app-navbar>\n<div class=\"image-banner\">\n   
 /***/ 987:
 /***/ (function(module, exports) {
 
-module.exports = "<a class=\"post-link\"  target=\"_blank\">\n\t<div class=\"card\" (click)=\"showLightBox.emit({feedIndex : feedIndex , show : 'show'})\" in-viewport (inViewport)=\"inview($event)\">\n\t\t<div class=\"card-image\">\n\t\t\t<a (click)=\"showHideLightbox(profileURL)\">\n\t\t\t\t<img src=\"{{feedItem.user.profile_image_url_https}}\" alt=\"Profile Image\" width=\"50\" height=\"50\"  *ngIf=\"inviewport\" />\n\t\t\t</a>\n\t\t</div>\n\t\t<div class=\"card-content\">\n\t\t\t<div class=\"card-header\">\n\t\t\t\t<a id=\"profile-link\" [routerLink]=\"['/search']\" [queryParams]=\"{ query : 'from:' + feedItem.user.screen_name }\" (click)=\"showLightBox.emit({show : 'hide'})\">\n\t\t\t\t\t<span class=\"name\">\n\t\t\t\t\t\t<b>{{profileName}}</b>\n\t\t\t\t\t</span>\n\t\t\t\t\t&nbsp;\n\t\t\t\t\t<span class=\"handle\">\n\t\t\t\t\t\t@{{feedItem.user.screen_name}}\n\t\t\t\t\t</span>\n\t\t\t\t\t&nbsp;\n\t\t\t\t\t<span class=\"timestamp\">\n\t\t\t\t\t\t{{datetime}}\n\t\t\t\t\t</span>\n\t\t\t\t</a>\n\t\t\t</div>\n\t\t\t<div class=\"card-text\">\n\t\t\t\t<feed-linker\n\t\t\t\t\t[text]=\"itemText\"\n\t\t\t\t\t[config]=\"cardAutolinkerConfig\" (click)=\"showLightBox.emit({show : 'hide'})\"></feed-linker>\n\t\t\t</div>\n\t\t\t<div class=\"card-image\" *ngFor=\"let image of feedItem.images let i = index\">\n\t\t\t\t\t<img  src=\"{{feedItem.images[i]}}\" width=\"500\" height=\"320\">\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"card-video\" *ngFor=\"let video of feedItem.videos let i = index\">\n\t\t\t\t\t<video src=\"{{feedItem.videos[i]}}\" width=\"500\" height=\"320\"></video>\n\t\t\t\t\t</div>\n\t\t\t<div class=\"card-footer\">\n\t\t\t\t<div class=\"action reply\">\n\t\t\t\t\t<a target=\"_blank\" href=\"https://twitter.com/intent/tweet?in_reply_to={{feedItem.id_str}}\"><i class=\"material-icons md-20\">reply</i></a>\n\t\t\t\t</div>\n\t\t\t\t<div class=\"action retweet\">\n\t\t\t\t\t<a target=\"_blank\" href=\"https://twitter.com/intent/retweet?tweet_id={{feedItem.id_str}}\"><i class=\"material-icons md-20\">repeat</i></a>\n\t\t\t\t\t<div class=\"counter retweet-count\">\n\t\t\t\t\t\t{{retweetCount}}\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t<div class=\"action like\">\n\t\t\t\t\t<a target=\"_blank\" href=\"https://twitter.com/intent/like?tweet_id={{feedItem.id_str}}\"><i class=\"material-icons md-20\">favorite_border</i></a>\n\t\t\t\t\t<div class=\"counter like-count\">\n\t\t\t\t\t\t{{favoriteCount}}\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t</div>\n\t</div>\n</a>\n"
+module.exports = "<a class=\"post-link\"  target=\"_blank\">\n\t<div class=\"card\" (click)=\"showLightBox.emit({feedIndex : feedIndex , show : 'show'})\" in-viewport (inViewport)=\"inview($event)\">\n\t\t<div class=\"card-image\">\n\t\t\t<a (click)=\"showHideLightbox(profileURL)\">\n\t\t\t\t<img src=\"{{feedItem.user.profile_image_url_https}}\" alt=\"Profile Image\" width=\"50\" height=\"50\"  *ngIf=\"inviewport\" />\n\t\t\t</a>\n\t\t</div>\n\t\t<div class=\"card-content\">\n\t\t\t<div class=\"card-header\">\n\t\t\t\t<a id=\"profile-link\" [routerLink]=\"['/search']\" [queryParams]=\"{ query : 'from:' + feedItem.user.screen_name }\" (click)=\"showLightBox.emit({show : 'hide'})\">\n\t\t\t\t\t<span class=\"name\">\n\t\t\t\t\t\t<b>{{profileName}}</b>\n\t\t\t\t\t</span>\n\t\t\t\t\t&nbsp;\n\t\t\t\t\t<span class=\"handle\">\n\t\t\t\t\t\t@{{feedItem.user.screen_name}}\n\t\t\t\t\t</span>\n\t\t\t\t\t&nbsp;\n\t\t\t\t\t<span class=\"timestamp\">\n\t\t\t\t\t\t{{datetime}}\n\t\t\t\t\t</span>\n\t\t\t\t</a>\n\t\t\t</div>\n\t\t\t<div class=\"card-text\">\n\t\t\t\t<feed-linker\n\t\t\t\t\t[text]=\"itemText\"\n\t\t\t\t\t[config]=\"cardAutolinkerConfig\" (click)=\"showLightBox.emit({show : 'hide'})\"></feed-linker>\n\t\t\t</div>\n\t\t\t<div class=\"card-image\" *ngFor=\"let image of feedItem.images let i = index\">\n\t\t\t\t\t<img  src=\"{{feedItem.images[i]}}\" width=\"500\" height=\"320\">\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"card-video\" *ngFor=\"let video of feedItem.videos let i = index\">\n\t\t\t\t\t<iframe [src]=\"feedItem.videos[i]\" width=\"420\" height=\"315\" allowfullscreen></iframe>\n\t\t\t\t\t</div>\n\t\t\t<div class=\"card-footer\">\n\t\t\t\t<div class=\"action reply\">\n\t\t\t\t\t<a target=\"_blank\" href=\"https://twitter.com/intent/tweet?in_reply_to={{feedItem.id_str}}\"><i class=\"material-icons md-20\">reply</i></a>\n\t\t\t\t</div>\n\t\t\t\t<div class=\"action retweet\">\n\t\t\t\t\t<a target=\"_blank\" href=\"https://twitter.com/intent/retweet?tweet_id={{feedItem.id_str}}\"><i class=\"material-icons md-20\">repeat</i></a>\n\t\t\t\t\t<div class=\"counter retweet-count\">\n\t\t\t\t\t\t{{retweetCount}}\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t<div class=\"action like\">\n\t\t\t\t\t<a target=\"_blank\" href=\"https://twitter.com/intent/like?tweet_id={{feedItem.id_str}}\"><i class=\"material-icons md-20\">favorite_border</i></a>\n\t\t\t\t\t<div class=\"counter like-count\">\n\t\t\t\t\t\t{{favoriteCount}}\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t</div>\n\t\t</div>\n\t</div>\n</a>\n"
 
 /***/ }),
 
@@ -5414,7 +5384,7 @@ module.exports = "<div class=\"wrapper\">\n\t<div class=\"logo-and-form\">\n\t\t
 /***/ 990:
 /***/ (function(module, exports) {
 
-module.exports = "\t\t\t<div class=\"overlay\">\n\t\t\t\t<div class=\"overlay-content\">\n\t\t\t\t\t<button class=\"lightbox-close\" (click)=\"hideLightBox.emit()\">x</button>\n\t\t\t\t\t<a href=\"{{profileURL}}\" target=\"_blank\" id=\"profile-link\">\n                        <img class=\"lightbox-img\" src=\"{{feedItem.user.profile_image_url_https}}\"/>\n                        </a>\n                    <a [routerLink]=\"['/search']\" [queryParams]=\"{ query : 'from:' + feedItem.user.screen_name }\" (click)=\"hideLightBox.emit()\" id=\"profile-link\">\n\t\t\t\t\t<h3 class=\"lightbox-name\">{{profileName}} <span class=\"lightbox-timestamp\">\n\t\t\t\t\t\t{{datetime}}\n\t\t\t\t\t</span></h3>\n\t\t\t\t\t\t<p class=\"lightbox-nickname\">@{{feedItem.user.screen_name}}</p>\n                    </a>\n\t\t\t\t\t\t<p class=\"lightbox-tweet\"><feed-linker\n\t\t\t\t\t[text]=\"itemText\"\n\t\t\t\t\t[config]=\"cardAutolinkerConfig\" (onShowed)=\"onShowed($event)\"></feed-linker></p>\n\t\t\t\t\t<div class=\"card-image\" *ngFor=\"let image of feedItem.images let i = index\">\n\t\t\t\t\t<img  src=\"{{feedItem.images[i]}}\" width=\"500\" height=\"320\">\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class=\"card-video\" *ngFor=\"let video of feedItem.videos let i = index\">\n\t\t\t\t\t<video src=\"{{feedItem.videos[i]}}\" width=\"500\" height=\"320\"></video>\n\t\t\t\t\t</div>\n                    <div class=\"lightbox-actions\">\n                    <div class=\"lightbox-action lightbox-reply lightbox-space\">\n\t\t\t\t\t<a target=\"_blank\" href=\"https://twitter.com/intent/tweet?in_reply_to={{feedItem.id_str}}\"><i class=\"material-icons lightbox-md-20\">reply</i></a>\n\t\t\t\t</div>\n\t\t\t\t<div class=\"lightbox-action lightbox-retweet lightbox-space\">\n\t\t\t\t\t<a target=\"_blank\" href=\"https://twitter.com/intent/retweet?tweet_id={{feedItem.id_str}}\"><i class=\"material-icons lightbox-md-20\">repeat</i></a>\n\t\t\t\t\t<div class=\"lightbox-counter lightbox-retweet-count\">\n\t\t\t\t\t\t{{retweetCount}}\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t<div class=\"lightbox-action lightbox-like lightbox-space\">\n\t\t\t\t\t<a target=\"_blank\" href=\"https://twitter.com/intent/like?tweet_id={{feedItem.id_str}}\"><i class=\"material-icons lightbox-md-20\">favorite_border</i></a>\n\t\t\t\t\t<div class=\"lightbox-counter lightbox-like-count\">\n\t\t\t\t\t\t{{favouriteCount}}\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t</div>\n          <a class=\"lightbox-btn\" target=\"_blank\" href=\"{{feedItem.link}}\">View on Twitter</a>\n        </div>\n\t\t\t</div>\n"
+module.exports = "\t\t\t<div class=\"overlay\">\n\t\t\t\t<div class=\"overlay-content\">\n\t\t\t\t\t<button class=\"lightbox-close\" (click)=\"hideLightBox.emit()\">x</button>\n\t\t\t\t\t<a href=\"{{profileURL}}\" target=\"_blank\" id=\"profile-link\">\n                        <img class=\"lightbox-img\" src=\"{{feedItem.user.profile_image_url_https}}\"/>\n                        </a>\n                    <a [routerLink]=\"['/search']\" [queryParams]=\"{ query : 'from:' + feedItem.user.screen_name }\" (click)=\"hideLightBox.emit()\" id=\"profile-link\">\n\t\t\t\t\t<h3 class=\"lightbox-name\">{{profileName}} <span class=\"lightbox-timestamp\">\n\t\t\t\t\t\t{{datetime}}\n\t\t\t\t\t</span></h3>\n\t\t\t\t\t\t<p class=\"lightbox-nickname\">@{{feedItem.user.screen_name}}</p>\n                    </a>\n\t\t\t\t\t\t<p class=\"lightbox-tweet\"><feed-linker\n\t\t\t\t\t[text]=\"itemText\"\n\t\t\t\t\t[config]=\"cardAutolinkerConfig\" (onShowed)=\"onShowed($event)\"></feed-linker></p>\n                    <div class=\"lightbox-actions\">\n                    <div class=\"lightbox-action lightbox-reply lightbox-space\">\n\t\t\t\t\t<a target=\"_blank\" href=\"https://twitter.com/intent/tweet?in_reply_to={{feedItem.id_str}}\"><i class=\"material-icons lightbox-md-20\">reply</i></a>\n\t\t\t\t</div>\n\t\t\t\t<div class=\"lightbox-action lightbox-retweet lightbox-space\">\n\t\t\t\t\t<a target=\"_blank\" href=\"https://twitter.com/intent/retweet?tweet_id={{feedItem.id_str}}\"><i class=\"material-icons lightbox-md-20\">repeat</i></a>\n\t\t\t\t\t<div class=\"lightbox-counter lightbox-retweet-count\">\n\t\t\t\t\t\t{{retweetCount}}\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t<div class=\"lightbox-action lightbox-like lightbox-space\">\n\t\t\t\t\t<a target=\"_blank\" href=\"https://twitter.com/intent/like?tweet_id={{feedItem.id_str}}\"><i class=\"material-icons lightbox-md-20\">favorite_border</i></a>\n\t\t\t\t\t<div class=\"lightbox-counter lightbox-like-count\">\n\t\t\t\t\t\t{{favouriteCount}}\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t\t</div>\n          <a class=\"lightbox-btn\" target=\"_blank\" href=\"{{feedItem.link}}\">View on Twitter</a>\n        </div>\n\t\t\t</div>\n"
 
 /***/ }),
 
