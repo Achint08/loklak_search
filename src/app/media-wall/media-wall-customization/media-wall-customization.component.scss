@@ -1,0 +1,76 @@
+md-icon {
+	position: relative;
+	top:7px;
+	right: 7px;
+}
+
+/deep/ .mat-tab-label:focus {
+	background-color: rgba(232, 181, 221, 0.28);
+}
+/deep/ .mat-ink-bar{
+	background-color: #ff4081;
+}
+
+.form-close{
+	border: none;
+	width: 40px;
+	height: 40px;
+	font-size: 30px;
+	position: absolute;
+	right: 25px;
+	top: 10px;
+	background: white;
+	color: gray;
+	cursor: pointer;
+	}
+
+
+button::-moz-focus-inner {
+  border: 0;
+}
+
+
+
+div.header {
+	margin: 5px 10px 0 0;
+	height: 500px;
+	display: flex;
+	flex-direction: column;
+}
+
+div.example-full-width {
+	display: flex;
+	flex-direction: row;
+	margin-top: 10px;
+
+	div.slider {
+		flex: 1;
+	}
+
+	div.color {
+		flex:1;
+
+		input {
+			cursor: pointer;
+		}
+	}
+}
+
+span.apply-button {
+	margin-right: auto;
+	margin-left: auto;
+
+	button {
+			border: none;
+			color: white;
+			background-color: #ff4081;
+			padding: 10px 25px;
+			font-size: 16px;
+			border-radius: 5px;
+			text-decoration: none;
+			margin-top: 10px;
+			cursor: pointer;
+	}
+}
+
+
