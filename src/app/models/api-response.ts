@@ -41,6 +41,8 @@ export interface ApiResponseResult {
 	link: string;
 	links: string[];
 	links_count: number;
+	classifier_profanity: string;
+	classifier_profanity_probability: string;
 	mentions: string[];
 	mentions_count: number;
 	place_context: string;
