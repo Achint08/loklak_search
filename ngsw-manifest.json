@@ -3,7 +3,7 @@
     "urls": {
       "/loklak_search/0.444db01e31bca863e6e8.chunk.js": "f474e8e14d539512a4148d160b1a7ec9e0fd7efb",
       "/loklak_search/1.a6811ad5d609c3fac2b4.chunk.js": "5b9fdfa75665ac46842ad26b3927d50a1becffb5",
-      "/loklak_search/2.554afa890c604a58ba19.chunk.js": "e5a0827d449fab79c668946d7849b130434e726e",
+      "/loklak_search/2.c6c3d143f47d70f9c1c4.chunk.js": "1fcaa133a267bfbab8851b667688963897272b13",
       "/loklak_search/3.3489eaf8cb89d2595a51.chunk.js": "224e13e3c2a561f9dd5f144d49e538254950ccba",
       "/loklak_search/4.f44936eb494a52e796e6.chunk.js": "1011b9a5f6bde94e0fa51586f7de157150ac0eab",
       "/loklak_search/5.0d41814cf6ed567bea7d.chunk.js": "9ff56154f2ab10079f296c554e2b01f993ba4cf7",
@@ -13,7 +13,7 @@
       "/loklak_search/scripts.c06e93f2210571e04887.bundle.js": "6fd9ee47fccf633176eec25b6361b7d6c9308fc6",
       "/loklak_search/sw-register.8a2784a5afb20cfd2636.bundle.js": "e1dd0b83fc974705581a88dc27a1e48a70140b26",
       "/loklak_search/vendor.4e4b1ce6f194f7ce3fca.bundle.js": "8f67a22913814329d68749a0acf1f34f8f817cab",
-      "/loklak_search/inline.b50da434d2883327d6dc.bundle.js": "a00ae9d6c99023af74fa5f6567f58494051c3ad9",
+      "/loklak_search/inline.e1484c5228b726f791a0.bundle.js": "cd477b73474416eab329258d5a6baeb34427d174",
       "/loklak_search/styles.d82e11391c95d1c31cd8.bundle.css": "80d66071c109a0880d2e887e52421c5f9d1174ad",
       "/loklak_search/assets/.DS_Store": "2fccb2798b2314211e988891531cc640fbe652cb",
       "/loklak_search/assets/.npmignore": "da39a3ee5e6b4b0d3255bfef95601890afd80709",
@@ -23,7 +23,7 @@
       "/loklak_search/assets/images/cow_400x466.png": "6a54c73ee46ab9a44eb782891b52fbd0ae11d713",
       "/loklak_search/assets/images/favicons/favicon.png": "673bc7cc92932d6896874274c3c17d9e6089801e",
       "/loklak_search/assets/images/logo.png": "adaeca27b26453abf49b60b4957eff52b7df72a7",
-      "/loklak_search/index.html": "a81019e1496a5140d522cd0165f95ebeb97784fb"
+      "/loklak_search/index.html": "059151da75f71c8802bb136769599bf80bd8759d"
     },
     "_generatedFromWebpack": true
   }
