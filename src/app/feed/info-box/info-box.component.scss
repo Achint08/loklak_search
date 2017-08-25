@@ -84,4 +84,10 @@
 
 	.link-sidebar {
 		margin: 3px 7px;
+		padding: 0px 15px;
+		border-right: 1px solid black;
+	}
+
+	.link-sidebar:last-child {
+		border-right: none;
 	}
