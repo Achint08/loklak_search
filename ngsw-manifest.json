@@ -3,17 +3,17 @@
     "urls": {
       "/loklak_search/0.3d13730e76738885400f.chunk.js": "c9a81848bc4f1ad7cc8ace87fd82f40cbe2481fe",
       "/loklak_search/1.a58aafe8e6b6d34ee660.chunk.js": "a9f93d256f89d6e07e6131debd35c6a9c172a3a6",
-      "/loklak_search/2.f01d4e0638ba9f219b21.chunk.js": "fcb7cb08ba4e6b950e07acef59b7ebda29fdfe3f",
+      "/loklak_search/2.fc9e949213f535bbd143.chunk.js": "fa7aab8a7f017ea4cf9e7af6ff8fe01b81e08664",
       "/loklak_search/3.3489eaf8cb89d2595a51.chunk.js": "224e13e3c2a561f9dd5f144d49e538254950ccba",
       "/loklak_search/4.f44936eb494a52e796e6.chunk.js": "1011b9a5f6bde94e0fa51586f7de157150ac0eab",
-      "/loklak_search/5.1907a79838998bb6bcea.chunk.js": "8ec9af855b05df9ffd6c1b2d81be50267bd727f7",
+      "/loklak_search/5.22edd34bf3a433a9befc.chunk.js": "c3effd18975a457a162727b01a710baa395b2f41",
       "/loklak_search/6.2949950bc5236244ef63.chunk.js": "414be6aa048039e69f3a80294eb9fda5c10a77aa",
       "/loklak_search/polyfills.d5de8019487363e7d115.bundle.js": "f39a8f0b89ef0a8c369e6f72cd72d602615e1d03",
-      "/loklak_search/main.ed1eb19ca899702f96e7.bundle.js": "7585c240463cc32b3aede8bfdbb75bbe7be32e3a",
+      "/loklak_search/main.5889eed6ab8e5fdabf93.bundle.js": "4b547eabe40c4cbb513ef8e8405e3b715b12b42a",
       "/loklak_search/scripts.c06e93f2210571e04887.bundle.js": "6fd9ee47fccf633176eec25b6361b7d6c9308fc6",
       "/loklak_search/sw-register.8a2784a5afb20cfd2636.bundle.js": "e1dd0b83fc974705581a88dc27a1e48a70140b26",
       "/loklak_search/vendor.4e4b1ce6f194f7ce3fca.bundle.js": "8f67a22913814329d68749a0acf1f34f8f817cab",
-      "/loklak_search/inline.741914fb5c74fa801823.bundle.js": "32722e813e99eb2d15f4956f4a11f181942dfa5c",
+      "/loklak_search/inline.ccbf28b9a800df0ccf8e.bundle.js": "25ae1992c2dc09d8a8945c0159b4e6742a9fac61",
       "/loklak_search/styles.d82e11391c95d1c31cd8.bundle.css": "80d66071c109a0880d2e887e52421c5f9d1174ad",
       "/loklak_search/assets/.DS_Store": "2fccb2798b2314211e988891531cc640fbe652cb",
       "/loklak_search/assets/.npmignore": "da39a3ee5e6b4b0d3255bfef95601890afd80709",
@@ -23,7 +23,7 @@
       "/loklak_search/assets/images/cow_400x466.png": "6a54c73ee46ab9a44eb782891b52fbd0ae11d713",
       "/loklak_search/assets/images/favicons/favicon.png": "673bc7cc92932d6896874274c3c17d9e6089801e",
       "/loklak_search/assets/images/logo.png": "adaeca27b26453abf49b60b4957eff52b7df72a7",
-      "/loklak_search/index.html": "efaf28b30dc7a184fa2b5b0e5c5b881296e96b28"
+      "/loklak_search/index.html": "6678f3f88df486db60d15fbebbb373a0a526bdc9"
     },
     "_generatedFromWebpack": true
   }
